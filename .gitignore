@@ -1,0 +1,28 @@
+# Dependency directories
+node_modules/
+
+# Environment variables file
+.env
+
+# IDE files
+.vscode/
+.idea/
+
+# Log files
+logs/
+
+# Mac OSX file system files
+.DS_Store
+
+# npm debug log
+npm-debug.log
+
+# Yarn Integrity file
+.yarn-integrity
+
+# macOS directory attributes
+._*
+
+# Ignore server configuration
+config.json
+mock
