@@ -40,9 +40,9 @@ app.use((req, res, next) => {
     } else {
         console.error(chalk.red(`Handler file not found for route: ${routePath}`));
 
-        // Check if debug mode is enabled
-        const debugMode = process.env.DEBUG_MODE === 'true';
-        if (debugMode) {
+        // Check if write mode is enabled
+        const writeMode = process.env.WRITE_MODE === 'true';
+        if (writeMode) {
             const fullUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
             const queryParameters = req.query;
             const requestHeaders = req.headers;
