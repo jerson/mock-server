@@ -29,7 +29,7 @@ app.use((req, res, next) => {
         routePath += 'index';
     }
 
-    const filePath = path.join(__dirname, 'mock', `${routePath}.js`);
+    const filePath = path.join(__dirname, 'mock', req.get('host') || 'localhost', `${routePath}.js`);
 
     if (handlerExists(filePath)) {
         const handler = require(filePath);
@@ -51,14 +51,14 @@ app.use((req, res, next) => {
             }
 
             const templateContent = `module.exports = (req, res, next) => {\n` +
-                                    `    // Implement your logic here\n` +
-                                    `    const fullUrl = "${fullUrl}";\n` +
-                                    `    const queryParameters = ${JSON.stringify(queryParameters)};\n` +
-                                    `    const requestHeaders = ${JSON.stringify(requestHeaders)};\n` +
-                                    `    const requestBody = ${JSON.stringify(requestBody)};\n` +
-                                    `    console.log('Full URL:', fullUrl);\n` +
-                                    `    res.json({ ok: true });\n` +
-                                    `};\n`;
+                `    // Implement your logic here\n` +
+                `    const fullUrl = "${fullUrl}";\n` +
+                `    const queryParameters = ${JSON.stringify(queryParameters)};\n` +
+                `    const requestHeaders = ${JSON.stringify(requestHeaders)};\n` +
+                `    const requestBody = ${JSON.stringify(requestBody)};\n` +
+                `    console.log('Full URL:', fullUrl);\n` +
+                `    res.json({ ok: true });\n` +
+                `};\n`;
             fs.writeFileSync(filePath, templateContent);
             console.log(chalk.yellow(`Debug mode enabled: Created a handler file at ${filePath}`));
             console.log(chalk.yellow(`Template content:\n${templateContent}`));
