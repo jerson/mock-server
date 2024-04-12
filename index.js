@@ -1,9 +1,12 @@
 const express = require('express');
 const fs = require('fs');
+const cors = require('cors')
 const path = require('path');
 const chalk = require('chalk');
 
 const app = express();
+
+app.use(cors())
 
 const handlerExists = (filePath) => {
     return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
@@ -48,6 +51,7 @@ app.use((req, res, next) => {
             const directoryPath = path.dirname(filePath);
             if (!fs.existsSync(directoryPath)) {
                 fs.mkdirSync(directoryPath, { recursive: true });
+                fs.chmodSync(directoryPath, 0o777);
             }
 
             const templateContent = `module.exports = (req, res, next) => {\n` +
@@ -60,6 +64,7 @@ app.use((req, res, next) => {
                 `    res.json({ ok: true });\n` +
                 `};\n`;
             fs.writeFileSync(filePath, templateContent);
+            fs.chmodSync(filePath, 0o777);
             console.log(chalk.yellow(`Debug mode enabled: Created a handler file at ${filePath}`));
             console.log(chalk.yellow(`Template content:\n${templateContent}`));
         } else {
