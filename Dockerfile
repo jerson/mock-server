@@ -1,13 +1,13 @@
-FROM node:latest
+FROM oven/bun:latest
 
 WORKDIR /app
 
-COPY package.json yarn.lock ./
+COPY package.json bun.lock ./
 
-RUN yarn install --frozen-lockfile
+RUN bun install
 
 COPY . .
 
 EXPOSE 3000
 
-CMD ["yarn", "start"]
+CMD ["bun", "start"]
