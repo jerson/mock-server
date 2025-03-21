@@ -25,6 +25,7 @@
     "lodash": "^4.17.21",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.0",
+    "short-unique-id": "^5.2.0",
     "uuid": "^11.1.0"
   }
 }

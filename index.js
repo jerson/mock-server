@@ -1,25 +1,29 @@
 const express = require('express');
 const fs = require('fs');
-const cors = require('cors')
+const cors = require('cors');
 const path = require('path');
 const chalk = require('chalk');
+const ShortUniqueId = require('short-unique-id')
+const uid = new ShortUniqueId({ length: 10 });
 
 const app = express();
 app.use(express.json());
-app.use(cors())
+app.use(cors());
 
 const handlerExists = (filePath) => {
     return fs.existsSync(filePath) && fs.lstatSync(filePath).isFile();
 };
 
 app.use((req, res, next) => {
-    console.log(chalk.gray(`---------------------------------------------`));
-    console.log(chalk.green(`Received ${req.method} request at ${req.path}`));
-    console.log(chalk.cyan('Query Parameters:'), req.query);
-    console.log(chalk.cyan('Request Body:'), req.body);
-    console.log(chalk.cyan('Request Headers:'));
+    req.requestId = uid.rnd();
+
+    console.log(req.requestId, chalk.gray(`-----START ${req.requestId} ------`));
+    console.log(req.requestId, chalk.green(`Received ${req.method} request at ${req.path}`));
+    console.log(req.requestId, chalk.cyan('Query Parameters:'), req.query);
+    console.log(req.requestId, chalk.cyan('Request Body:'), req.body);
+    console.log(req.requestId, chalk.cyan('Request Headers:'));
     Object.keys(req.headers).forEach(header => {
-        console.log(chalk.cyan(`  ${header}: ${req.headers[header]}`));
+        console.log(req.requestId, chalk.cyan(`  ${header}: ${req.headers[header]}`));
     });
     next();
 });
@@ -38,7 +42,7 @@ app.use((req, res, next) => {
         const handler = require(filePath);
         handler(req, res, next);
     } else {
-        console.error(chalk.red(`Handler file not found for route: ${routePath}`));
+        console.error(req.requestId, chalk.red(`Handler file not found for route: ${routePath}`));
 
         // Check if write mode is enabled
         const writeMode = process.env.WRITE_MODE === 'true';
@@ -60,19 +64,26 @@ app.use((req, res, next) => {
                 `    const queryParameters = ${JSON.stringify(queryParameters)};\n` +
                 `    const requestHeaders = ${JSON.stringify(requestHeaders)};\n` +
                 `    const requestBody = ${JSON.stringify(requestBody)};\n` +
-                `    console.log('Full URL:', fullUrl);\n` +
+                `    console.log(req.requestId, 'Full URL:', fullUrl);\n` +
                 `    res.json({ ok: true });\n` +
                 `};\n`;
             fs.writeFileSync(filePath, templateContent);
             fs.chmodSync(filePath, 0o777);
-            console.log(chalk.yellow(`Debug mode enabled: Created a handler file at ${filePath}`));
-            console.log(chalk.yellow(`Template content:\n${templateContent}`));
+            console.log(req.requestId, chalk.yellow(`Debug mode enabled: Created a handler file at ${filePath}`));
+            console.log(req.requestId, chalk.yellow(`Template content:\n${templateContent}`));
         } else {
-            console.error(chalk.yellow(`Suggestion: Enable debug mode to automatically create a handler file.`));
+            console.error(req.requestId, chalk.yellow(`Suggestion: Enable debug mode to automatically create a handler file.`));
         }
 
         res.status(404).send('Handler file not found');
     }
+
+    res.on('finish', () => {
+        console.log(req.requestId, chalk.cyan('Response Status:'), req.statusCode);
+        console.log(req.requestId, chalk.cyan('Response Body:'), req.body);
+        console.log(req.requestId, chalk.gray(`-----END ${req.requestId} ------`));
+
+    });
 });
 
 const PORT = process.env.PORT || 3000;
