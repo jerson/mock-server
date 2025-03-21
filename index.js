@@ -16,6 +16,7 @@ const handlerExists = (filePath) => {
 
 app.use((req, res, next) => {
     req.requestId = uid.rnd();
+    res.setHeader('x-request-id', req.requestId);
 
     console.log(req.requestId, chalk.gray(`-----START ${req.requestId} ------`));
     console.log(req.requestId, chalk.green(`Received ${req.method} request at ${req.path}`));
