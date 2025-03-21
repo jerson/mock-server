@@ -41,12 +41,10 @@ app.use((req, res, next) => {
 
     const originalJson = res.json;
     res.json = function (body) {
-        console.log(req.requestId, chalk.cyan('Response Status:'), res.statusCode);
         console.log(req.requestId, chalk.cyan('Response Body:'), body);
-        console.log(req.requestId, chalk.gray(`-----END ${req.requestId} ------`));
         return originalJson.call(this, body);
     };
-    
+
     if (handlerExists(filePath)) {
         const handler = require(filePath);
         handler(req, res, next);
@@ -86,6 +84,11 @@ app.use((req, res, next) => {
 
         res.status(404).send('Handler file not found');
     }
+
+    res.on('finish', () => {
+        console.log(req.requestId, chalk.cyan('Response Status:'), res.statusCode);
+        console.log(req.requestId, chalk.gray(`-----END ${req.requestId} ------`));
+    });
 
 });
 
