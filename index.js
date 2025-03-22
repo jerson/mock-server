@@ -71,7 +71,7 @@ app.use((req, res, next) => {
                 `    const fullUrl = "${fullUrl}";\n` +
                 `    const queryParameters = ${JSON.stringify(queryParameters)};\n` +
                 `    const requestHeaders = ${JSON.stringify(requestHeaders)};\n` +
-                `    const requestBody = ${JSON.stringify(requestBody)};\n` ++
+                `    const requestBody = ${JSON.stringify(requestBody)};\n` +
                 `    res.json({ ok: true });\n` +
                 `};\n`;
             fs.writeFileSync(filePath, templateContent);
