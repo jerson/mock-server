@@ -67,12 +67,11 @@ app.use((req, res, next) => {
             }
 
             const templateContent = `module.exports = (req, res, next) => {\n` +
-                `    // Implement your logic here\n` +
+                `    // TODO implement your logic here\n` +
                 `    const fullUrl = "${fullUrl}";\n` +
                 `    const queryParameters = ${JSON.stringify(queryParameters)};\n` +
                 `    const requestHeaders = ${JSON.stringify(requestHeaders)};\n` +
-                `    const requestBody = ${JSON.stringify(requestBody)};\n` +
-                `    console.log(req.requestId, 'Full URL:', fullUrl);\n` +
+                `    const requestBody = ${JSON.stringify(requestBody)};\n` ++
                 `    res.json({ ok: true });\n` +
                 `};\n`;
             fs.writeFileSync(filePath, templateContent);
