@@ -5,7 +5,7 @@ const path = require('path');
 const chalk = require('chalk');
 const ShortUniqueId = require('short-unique-id')
 const uid = new ShortUniqueId({ length: 10 });
-
+const localhosts = ["localhost","127.0.0.1"]
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -15,6 +15,10 @@ const handlerExists = (filePath) => {
 };
 
 app.use((req, res, next) => {
+    if (localhosts.includes(req.hostname)){
+        next();
+        return
+    }
     req.requestId = uid.rnd();
     res.setHeader('x-request-id', req.requestId);
 
@@ -30,6 +34,11 @@ app.use((req, res, next) => {
 });
 
 app.use((req, res, next) => {
+    if (localhosts.includes(req.hostname)){
+        res.json({running:true})
+        return
+    }
+
     let routePath = req.path;
 
     // Adjust routePath for index file if necessary
