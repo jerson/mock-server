@@ -51,7 +51,7 @@ app.use((req, res, next) => {
 
     const originalJson = res.json;
     res.json = function (body) {
-        console.log(req.requestId, chalk.cyan('Response Body:'), body);
+        console.log(req.requestId, chalk.cyan('Response Body:'), JSON.stringify(body, null, 1));
         return originalJson.call(this, body);
     };
 
